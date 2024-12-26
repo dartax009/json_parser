@@ -1,3 +1,3 @@
 .vscode
-./example/obj
-./example/debug
+example/obj/
+example/debug/
