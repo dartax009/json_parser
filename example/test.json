@@ -1,0 +1,47 @@
+{
+    "person": {
+      "id": 1,
+      "name": {
+        "first": "Иван",
+        "last": "Иванов"
+      },
+      "age": 30,
+      "phoneNumbers": [
+        {
+          "type": "mobile",
+          "number": "+7-123-456-7890"
+        },
+        {
+          "type": "home",
+          "number": "+7-987-654-3210"
+        }
+      ],
+      "addresses": [
+        {
+          "type": "home",
+          "address": {
+            "street": "Улица Пушкина",
+            "city": "Москва"
+          }
+        }
+      ],
+      "isEmployed": true,
+      "any_null": null,
+      "hobbies": [
+        "Чтение",
+        "Фотография",
+        {
+          "type": "Спорт",
+          "details": {
+            "favoriteSport": "Футбол",
+            "teams": [
+              {
+                "name": "Спартак",
+                "role": "болельщик"
+              }
+            ]
+          }
+        }
+      ]
+    }
+}
