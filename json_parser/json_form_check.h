@@ -51,6 +51,7 @@ typedef struct s_json_map json_map_t;
  */
 uint8_t parsing_json (file_inf_t *file_inf, const json_map_t *json_map);
 
+#ifdef __linux__
 /**
  * @brief Открыть файл json и спроецировать его в ОЗУ для дальнейшей работы
  * 
@@ -74,5 +75,6 @@ uint8_t init_json_mmap (char *path, file_inf_t *file_inf);
  * [2] - Ошибка. Не удалось закрыть файл
  */
 uint8_t deinit_json_mmap (file_inf_t *file_inf);
+#endif
 
 #endif
