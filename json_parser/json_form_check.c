@@ -72,7 +72,7 @@ static int check_field(const json_map_t *json_map, char *file, jsmntok_t *tok)
 				break;
 			}
 		}else
-		if (strncmp(file + tok->start, json_map[map_count].field_name, strlen(json_map[map_count].field_name)) == 0)
+		if (strncmp(file + tok->start, json_map[map_count].field_name, tok->end - tok->start) == 0)
 		{
 			break;
 		}
