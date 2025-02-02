@@ -1,9 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __linux__
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#endif
 
 #include "json_form_check.h"
 
@@ -14,6 +17,7 @@
 	#define print_error(...)	while(0){}
 #endif
 
+#ifdef __linux__
 uint8_t init_json_mmap (char *path, file_inf_t *file_inf)
 {
     struct stat stat;
@@ -58,6 +62,7 @@ uint8_t deinit_json_mmap (file_inf_t *file_inf)
 
 	return 0;
 }
+#endif
 
 static int check_field(const json_map_t *json_map, char *file, jsmntok_t *tok)
 {
@@ -72,7 +77,7 @@ static int check_field(const json_map_t *json_map, char *file, jsmntok_t *tok)
 				break;
 			}
 		}else
-		if (strncmp(file + tok->start, json_map[map_count].field_name, strlen(json_map[map_count].field_name)) == 0)
+		if (strncmp(file + tok->start, json_map[map_count].field_name, tok->end - tok->start) == 0)
 		{
 			break;
 		}
