@@ -89,6 +89,22 @@ static const json_map_t c_hobbies_map[] =
     END_MAP_JSON
 };
 
+static const json_map_t c_any_array_map[] =
+{
+    {NULL, NULL, JSMN_STRING, NULL},
+
+    END_MAP_JSON
+};
+
+static const json_map_t c_any_object_map[] =
+{
+    {"any1", NULL, JSMN_PRIMITIVE, NULL},
+    {"any2", NULL, JSMN_PRIMITIVE, NULL},
+    {"any3", NULL, JSMN_PRIMITIVE, NULL},
+
+    END_MAP_JSON
+};
+
 static const json_map_t c_person_map[] =
 {
     {"id", NULL, JSMN_PRIMITIVE, NULL},
@@ -106,6 +122,9 @@ static const json_map_t c_person_map[] =
 static const json_map_t c_person[] =
 {
     {"person", NULL, JSMN_OBJECT, c_person_map},
+
+    {"any_array", NULL, JSMN_ARRAY, c_any_array_map},
+    {"any_object", NULL, JSMN_OBJECT, c_any_object_map},
 
     END_MAP_JSON
 };
