@@ -247,7 +247,54 @@ static const json_map_t person_map[] =
     END_MAP_JSON
 };
 ```
-Тут "phoneNumbers", так же, как и "hobbies", является JSMN_ARRAY - организовали переход на "уровень ниже". Ожидаем, что "phoneNumbers" будет состоять из объектов без имени, по этому первое поле NULL, а третье JSMN_OBJECT ~~(обработчик мы на него тоже не хотим. Ты же не хочешь дальше сам ковырять json?)~~. Четвертым полем мы организуем переход на структуру этого объекта. А дальше, как в первом примере.
+Тут "phoneNumbers", так же, как и "hobbies", является JSMN_ARRAY - организовали переход на "уровень ниже". Ожидаем, что "phoneNumbers" будет состоять из объектов без имени, по этому первое и второе поле NULL, а третье JSMN_OBJECT. Четвертым полем мы организуем переход на структуру этого объекта. А дальше, как в первом примере.
+
+Так же может быть ситуация, когда необходимо знать сколько элементов входит в array или object (для динамических данных):
+
+```json
+{
+    "any_array": [
+        "any1",
+        "any2",
+        "any3"
+    ],
+    "any_object":{
+        "any1":1,
+        "any2":2,
+        "any3":3
+    }
+}
+```
+
+Для указанного выше примера будет следующая карты:
+
+```c
+static const json_map_t any_array_map[] =
+{
+    {NULL, NULL, JSMN_STRING, NULL},
+
+    END_MAP_JSON
+};
+
+static const json_map_t any_object_map[] =
+{
+    {"any1", NULL, JSMN_PRIMITIVE, NULL},
+    {"any2", NULL, JSMN_PRIMITIVE, NULL},
+    {"any3", NULL, JSMN_PRIMITIVE, NULL},
+
+    END_MAP_JSON
+};
+
+static const json_map_t any_map[] =
+{
+    {"any_array", any_handler_array, JSMN_ARRAY, any_array_map},
+    {"any_object", any_object_handler, JSMN_OBJECT, any_object_map},
+
+    END_MAP_JSON
+};
+```
+
+В таком случае стоит учитывать, что аргумент size обработчика any_handler_array/any_object_handler будет принимать значение кол-ва элементов входящих в них (в данном случае 3).
 
 Вроде как (исходя из немногочисленных тестов), все эти переходы и вложенности могут быть какими угодно сложными, главное не запутаться в составление ~~натальной~~ карты.
 

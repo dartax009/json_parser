@@ -147,7 +147,15 @@ static int work_json_map (const json_map_t *json_map, char *file, jsmntok_t *tok
 
 		if (json_map[map_pos].func != NULL)
 		{
-			ret = json_map[map_pos].func(file + tok[tok_count].start, tok[tok_count].end - tok[tok_count].start);
+			if (tok[tok_count].type == JSMN_ARRAY || tok[tok_count].type == JSMN_OBJECT)
+			{
+				ret = json_map[map_pos].func(file + tok[tok_count].start, tok[tok_count].size);
+			}
+			else
+			{
+				ret = json_map[map_pos].func(file + tok[tok_count].start, tok[tok_count].end - tok[tok_count].start);
+			}
+
 			if (ret > 0)
 			{
 				return ret * -1;

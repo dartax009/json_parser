@@ -8,6 +8,8 @@ uint8_t print_string (const char *fild_value, size_t size);
 uint8_t print_num (const char *fild_value, size_t size);
 uint8_t print_bool (const char *fild_value, size_t size);
 uint8_t print_null (const char *fild_value, size_t size);
+uint8_t any_array_handler (const char *fild_value, size_t size);
+uint8_t any_object_handler (const char *fild_value, size_t size);
 
 
 static const json_map_t cw_addres_map[] =
@@ -95,6 +97,22 @@ static const json_map_t cw_hobbies_map[] =
     END_MAP_JSON
 };
 
+static const json_map_t cw_any_array_map[] =
+{
+    {NULL, NULL, JSMN_STRING, NULL},
+
+    END_MAP_JSON
+};
+
+static const json_map_t cw_any_object_map[] =
+{
+    {"any1", NULL, JSMN_PRIMITIVE, NULL},
+    {"any2", NULL, JSMN_PRIMITIVE, NULL},
+    {"any3", NULL, JSMN_PRIMITIVE, NULL},
+
+    END_MAP_JSON
+};
+
 static const json_map_t cw_person_map[] =
 {
     {"id", print_num, JSMN_PRIMITIVE, NULL},
@@ -112,6 +130,9 @@ static const json_map_t cw_person_map[] =
 static const json_map_t cw_person[] =
 {
     {"person", NULL, JSMN_OBJECT, cw_person_map},
+
+    {"any_array", any_array_handler, JSMN_ARRAY, cw_any_array_map},
+    {"any_object", any_object_handler, JSMN_OBJECT, cw_any_object_map},
 
     END_MAP_JSON
 };
