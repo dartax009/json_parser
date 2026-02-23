@@ -1,0 +1,59 @@
+{
+    "person": {
+      "id": 1,
+      "name": {
+        "first": "Иван",
+        "last": "Иванов"
+      },
+      "age": 30,
+      "error_fild": 1,
+      "phoneNumbers": [
+        {
+          "type": "mobile",
+          "number": "+7-123-456-7890"
+        },
+        {
+          "type": "home",
+          "number": "+7-987-654-3210"
+        }
+      ],
+      "addresses": [
+        {
+          "type": "home",
+          "address": {
+            "street": "Улица Пушкина",
+            "city": "Москва"
+          }
+        }
+      ],
+      "isEmployed": true,
+      "any_null": null,
+      "hobbies": [
+        "Чтение",
+        "Фотография",
+        {
+          "type": "Спорт",
+          "details": {
+            "favoriteSport": "Футбол",
+            "teams": [
+              {
+                "name": "Спартак",
+                "role": "болельщик"
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    "any_array":[
+      "хух",
+      "хах",
+      "хих"
+    ],
+    "any_object":{
+      "any1": 1,
+      "any2": 2,
+      "any3": 3
+    }
+}
