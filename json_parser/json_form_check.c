@@ -18,7 +18,7 @@
 #endif
 
 #ifdef __linux__
-uint8_t init_json_mmap (char *path, file_inf_t *file_inf)
+uint8_t init_json_mmap (const char * const path, file_inf_t *file_inf)
 {
     struct stat stat;
 
@@ -64,9 +64,9 @@ uint8_t deinit_json_mmap (file_inf_t *file_inf)
 }
 #endif
 
-static int check_field(const json_map_t *json_map, char *file, jsmntok_t *tok)
+static int32_t check_field(const json_map_t *const json_map, const char * const file, const jsmntok_t *const tok)
 {
-	int map_count = 0;
+	int32_t map_count = 0;
 
 	while(json_map[map_count].field_name != NULL || json_map[map_count].field_type != JSMN_UNDEFINED)
 	{
@@ -122,14 +122,14 @@ static int check_field(const json_map_t *json_map, char *file, jsmntok_t *tok)
 	return map_count;
 }
 
-static int work_json_map (const json_map_t *json_map, char *file, jsmntok_t *tok)
+static int32_t work_json_map (json_map_t *const json_map, const char * const file, const jsmntok_t *const tok, const uint8_t check_required)
 {
-	int tok_pos = 0;
-	int tok_count = 0;
-	int map_pos = 0;
+	int32_t tok_pos = 0;
+	int32_t tok_count = 0;
+	int32_t map_pos = 0;
 	uint8_t ret = 0;
 
-	int size_tok = tok[tok_count].size;
+	int32_t size_tok = tok[tok_count].size;
 	tok_count++;
 
 	while(tok[tok_count].type != JSMN_UNDEFINED && size_tok != 0)
@@ -143,6 +143,11 @@ static int work_json_map (const json_map_t *json_map, char *file, jsmntok_t *tok
 		if (json_map[map_pos].field_name != NULL)
 		{
 			tok_count++;
+		}
+
+		if (check_required == 1)
+		{
+			json_map[map_pos].count++;
 		}
 
 		if (json_map[map_pos].func != NULL)
@@ -164,7 +169,7 @@ static int work_json_map (const json_map_t *json_map, char *file, jsmntok_t *tok
 
 		if ( tok[tok_count].type == JSMN_ARRAY || tok[tok_count].type == JSMN_OBJECT)
 		{
-			tok_pos = work_json_map((json_map[map_pos].json_map != NULL) ? json_map[map_pos].json_map : json_map, file, &tok[tok_count]);
+			tok_pos = work_json_map((json_map[map_pos].json_map != NULL) ? json_map[map_pos].json_map : json_map, file, &tok[tok_count], check_required);
 			if (tok_pos < 0)
 			{
 				return tok_pos;
@@ -181,12 +186,40 @@ static int work_json_map (const json_map_t *json_map, char *file, jsmntok_t *tok
 	return tok_count;
 }
 
-uint8_t parsing_json (file_inf_t *file_inf, const json_map_t *json_map)
+//TODO Сделать динамическую првоерку
+//TODO Ускорить проверку не через тупой перебор
+static uint8_t check_required_filds (json_map_t *const json_map)
+{
+	uint32_t map_pos = 0;
+	uint8_t ret = 0;
+
+	while (json_map[map_pos].field_type != JSMN_UNDEFINED)
+	{
+		if ( (json_map[map_pos].min_count != 0) && (json_map[map_pos].count < json_map[map_pos].min_count) )
+		{
+			print_error("Поле %s не встретилось заданное кол-во раз. Ожидалось %u, встерилось %u\n", json_map[map_pos].field_name, json_map[map_pos].min_count, json_map[map_pos].count);
+			ret = 1;
+		}
+		if (json_map[map_pos].json_map != NULL)
+		{
+			if (check_required_filds(json_map[map_pos].json_map) != 0)
+			{
+				ret = 1;
+			}
+		}
+		json_map[map_pos].count = 0;
+		map_pos++;
+	}
+
+	return ret;
+}
+
+uint8_t parsing_json (const file_inf_t *const file_inf, json_map_t *const json_map, const uint8_t check_required)
 {
 	jsmn_parser parser;
 	jsmntok_t *tok = NULL;
-	int max_tok = 0;
-	int ret = 0;
+	int32_t max_tok = 0;
+	int32_t ret = 0;
 
 	jsmn_init(&parser);
 
@@ -213,13 +246,18 @@ uint8_t parsing_json (file_inf_t *file_inf, const json_map_t *json_map)
 		return 1;
 	}
 
-	ret = work_json_map(json_map, file_inf->file, tok);
+	ret = work_json_map(json_map, file_inf->file, tok, check_required);
 
 	free(tok);
 
 	if (ret < 0)
 	{
 		return ret * -1;
+	}
+
+	if (check_required == 1 && check_required_filds(json_map) != 0)
+	{
+		return 1;
 	}
 
 	return 0;
